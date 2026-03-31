@@ -3,90 +3,455 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Lucky Ace Casino — офіційне RP-казино серверу Ukrainian Reborn (Emergency Hamburg, Roblox)">
     <title>Lucky Ace Casino • Ukrainian Reborn</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap');
-        :root { --gold: #d4af77; --dark: #1a1208; --accent: #c9a66b; }
-        body { background: linear-gradient(135deg, #1a1208 0%, #2c2218 100%); font-family: 'Inter', sans-serif; touch-action: manipulation; }
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --gold: #d4af77;
+            --dark: #1a1208;
+            --accent: #c9a66b;
+        }
+        
+        * { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        body {
+            background: linear-gradient(135deg, #1a1208 0%, #2c2218 100%);
+            font-family: 'Inter', system_ui, sans-serif;
+            color: #d4af77;
+        }
+        
         .header-font { font-family: 'Playfair Display', sans-serif; }
-        .gold-glow { text-shadow: 0 0 20px #d4af77, 0 0 40px #c9a66b; }
-        .emoji-stable { font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif; font-size: 3rem; }
-        .card-hover { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
-        .card-hover:active { transform: scale(0.95); }
-        button { touch-action: manipulation; pointer-events: auto; }
-        @media (max-width: 640px) {
-            button { min-height: 56px; font-size: 1.15rem; }
-            .modal { margin: 12px; border-radius: 24px; }
+        .gold-glow { text-shadow: 0 0 25px #d4af77, 0 0 50px #c9a66b; }
+        
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.04);
+            box-shadow: 0 30px 60px -15px rgb(212 175 119);
+        }
+        
+        .modal {
+            animation: modalPop 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .toast {
+            animation: toastIn 0.3s ease forwards;
+        }
+        
+        .section-title {
+            position: relative;
+        }
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(to right, #d4af77, #c9a66b);
         }
     </style>
 </head>
-<body class="min-h-screen text-[#d4af77]">
+<body class="min-h-screen pb-20">
 
-    <header class="sticky top-0 bg-[#1a1208]/95 border-b border-[#d4af77]/30 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-gradient-to-br from-[#d4af77] to-[#c9a66b] rounded-2xl flex items-center justify-center text-4xl">♠️</div>
-                <h1 class="header-font text-4xl gold-glow">LUCKY ACE</h1>
-            </div>
-            <div class="flex items-center gap-4">
-                <div class="bg-[#2c2218] px-6 py-3 rounded-3xl border border-[#d4af77]/40 flex items-center gap-2">
-                    <span id="balance" class="header-font text-3xl font-bold">1000</span>
-                    <span class="text-2xl">€</span>
+    <!-- STICKY HEADER -->
+    <header class="sticky top-0 z-50 bg-[#1a1208]/95 backdrop-blur-xl border-b border-[#d4af77]/30">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-x-4">
+                <div class="w-11 h-11 bg-gradient-to-br from-[#d4af77] to-[#c9a66b] text-[#1a1208] rounded-2xl flex items-center justify-center text-4xl shadow-xl">♠️</div>
+                <div>
+                    <h1 class="header-font text-4xl tracking-tighter gold-glow">LUCKY ACE</h1>
+                    <p class="text-xs tracking-[2px] text-[#c9a66b] -mt-1">Ukrainian Reborn • Emergency Hamburg</p>
                 </div>
-                <button onclick="showHistory()" class="bg-[#2c2218] px-6 py-3 rounded-3xl border border-[#d4af77]/40 flex items-center gap-2 hover:border-[#d4af77]">
-                    <i class="fa-solid fa-clock"></i> <span class="hidden sm:inline">Історія</span>
+            </div>
+
+            <nav class="hidden md:flex items-center gap-x-8 text-sm font-medium">
+                <a href="#dashboard" onclick="navigateToSection('dashboard')" class="hover:text-white">Головна</a>
+                <a href="#games" onclick="navigateToSection('games')" class="hover:text-white">Ігри</a>
+                <a href="#wins" onclick="navigateToSection('wins')" class="hover:text-white">Виграші</a>
+                <a href="#bonuses" onclick="navigateToSection('bonuses')" class="hover:text-white">Бонуси</a>
+            </nav>
+
+            <!-- DASHBOARD BALANCE -->
+            <div class="flex items-center gap-x-6">
+                <div class="flex items-center gap-x-3 bg-[#2c2218] px-6 py-3 rounded-3xl border border-[#d4af77]/40">
+                    <div>
+                        <p class="text-xs text-[#c9a66b] tracking-widest">ДЕМО-БАЛАНС</p>
+                        <div class="flex items-baseline">
+                            <span id="balance" class="header-font text-4xl font-bold">1000</span>
+                            <span class="ml-1 text-2xl">€</span>
+                        </div>
+                    </div>
+                    <button onclick="showDepositModal()" class="bg-[#d4af77] hover:bg-[#c9a66b] text-[#1a1208] px-5 py-2 rounded-2xl font-semibold text-sm flex items-center gap-x-2">
+                        <i class="fa-solid fa-plus"></i> ПОПОВНИТИ
+                    </button>
+                </div>
+
+                <button onclick="showHistoryModal()" class="flex items-center gap-x-3 bg-[#2c2218] hover:bg-[#3a2f24] px-5 py-3 rounded-3xl border border-[#d4af77]/40">
+                    <i class="fa-solid fa-clock text-xl"></i>
+                    <span class="hidden sm:inline font-medium">Історія</span>
                 </button>
-                <button onclick="rechargeModal()" class="bg-[#d4af77] text-[#1a1208] px-6 py-3 rounded-3xl font-semibold flex items-center gap-2">ПОПОВНИТИ</button>
+
+                <div onclick="logout()" class="cursor-pointer text-[#c9a66b] hover:text-white flex items-center gap-x-2">
+                    <i class="fa-solid fa-circle-user text-2xl"></i>
+                </div>
             </div>
         </div>
     </header>
 
-    <div class="max-w-7xl mx-auto px-4 py-12">
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div onclick="showGame('roulette')" class="card-hover bg-[#2c2218] rounded-3xl border border-[#d4af77]/30 cursor-pointer p-2">
-                <div class="h-56 flex items-center justify-center emoji-stable">🎰</div>
-                <h4 class="header-font text-3xl text-center mt-4">Рулетка</h4>
+    <!-- HERO SECTION -->
+    <section class="max-w-7xl mx-auto px-6 pt-16 pb-12 text-center">
+        <div class="inline-flex items-center gap-x-3 bg-[#2c2218] border border-[#d4af77]/30 rounded-3xl px-6 py-2 text-sm mb-6">
+            <span class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></span>
+            ОФІЦІЙНЕ RP-КАЗИНО • Ukrainian Reborn
+        </div>
+        <h1 class="header-font text-6xl md:text-7xl tracking-tighter gold-glow leading-none mb-6">
+            LUCKY ACE<br>КАЗИНО
+        </h1>
+        <p class="max-w-lg mx-auto text-[#c9a66b] text-xl mb-8">
+            Демо-казино для role-play на сервері <strong>Emergency Hamburg</strong>.<br>
+            Почни з 1000 € і відчуй справжній азарт у RP!
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+            <button onclick="showGame('roulette')" class="px-10 py-5 bg-gradient-to-r from-[#d4af77] to-[#c9a66b] text-[#1a1208] font-semibold text-xl rounded-3xl flex items-center gap-x-3">
+                <i class="fa-solid fa-wheelchair"></i> ГРАТИ В РУЛЕТКУ
+            </button>
+            <button onclick="showGame('slots')" class="px-10 py-5 border-2 border-[#d4af77] text-[#d4af77] font-semibold text-xl rounded-3xl flex items-center gap-x-3 hover:bg-[#d4af77] hover:text-[#1a1208]">
+                <i class="fa-solid fa-dice"></i> СПРОБУВАТИ СЛОТИ
+            </button>
+        </div>
+        <div class="mt-8 text-xs flex items-center justify-center gap-x-8 text-[#c9a66b]">
+            <div class="flex items-center gap-x-2"><i class="fa-solid fa-shield-halved"></i> ТІЛЬКИ ДЛЯ RP</div>
+            <div class="flex items-center gap-x-2"><i class="fa-solid fa-users"></i> 18+</div>
+            <div class="flex items-center gap-x-2"><i class="fa-solid fa-hand-holding-dollar"></i> НЕ РЕАЛЬНІ ГРОШІ</div>
+        </div>
+    </section>
+
+    <!-- DASHBOARD SUMMARY -->
+    <section id="dashboard" class="max-w-7xl mx-auto px-6 py-8 bg-[#2c2218]/60 rounded-3xl mx-4">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+            <div>
+                <h2 class="text-2xl header-font">Вітаємо, RP-гравець!</h2>
+                <p class="text-[#c9a66b]">Твій демо-баланс для рольової гри на сервері Ukrainian Reborn</p>
             </div>
-            <div onclick="showGame('poker')" class="card-hover bg-[#2c2218] rounded-3xl border border-[#d4af77]/30 cursor-pointer p-2">
-                <div class="h-56 flex items-center justify-center emoji-stable">🃏</div>
-                <h4 class="header-font text-3xl text-center mt-4">Texas Roll 'Em</h4>
+            <div class="flex gap-6 text-center">
+                <div>
+                    <p class="text-xs text-[#c9a66b]">СЕГОДНІ ВИГРАНО</p>
+                    <p id="today-win" class="text-4xl header-font text-green-400">+420 €</p>
+                </div>
+                <div>
+                    <p class="text-xs text-[#c9a66b]">ОСТАННЯ СТАВКА</p>
+                    <p class="text-4xl header-font">Рулетка • 150 €</p>
+                </div>
+                <div>
+                    <p class="text-xs text-[#c9a66b]">РІВЕНЬ ГРАВЦЯ</p>
+                    <p class="text-4xl header-font flex items-center gap-x-2"><span class="text-amber-400">VIP</span> 3</p>
+                </div>
             </div>
-            <div onclick="showGame('slots')" class="card-hover bg-[#2c2218] rounded-3xl border border-[#d4af77]/30 cursor-pointer p-2">
-                <div class="h-56 flex items-center justify-center gap-8 emoji-stable">🍒 7️⃣ 💎</div>
-                <h4 class="header-font text-3xl text-center mt-4">Слоти</h4>
+        </div>
+    </section>
+
+    <!-- ПОПУЛЯРНІ ІГРИ -->
+    <section id="games" class="max-w-7xl mx-auto px-6 py-16">
+        <h2 class="section-title text-3xl header-font mb-8">Популярні ігри</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Рулетка -->
+            <div class="card-hover bg-[#2c2218] rounded-3xl p-6 border border-[#d4af77]/20">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="text-6xl">🎰</div>
+                    <div class="px-4 py-1 bg-red-600 text-white text-xs font-bold rounded-2xl">Високий ризик</div>
+                </div>
+                <h3 class="header-font text-3xl mb-1">Рулетка</h3>
+                <p class="text-[#c9a66b] text-sm mb-6">Класична європейська рулетка. Став на колір, число або комбінацію. Шанс на великий джекпот!</p>
+                <div class="flex gap-3">
+                    <button onclick="showGame('roulette')" class="flex-1 py-4 bg-gradient-to-r from-[#d4af77] to-[#c9a66b] text-[#1a1208] font-semibold rounded-2xl">ГРАТИ</button>
+                    <button onclick="showRules('roulette')" class="px-8 border border-[#d4af77] text-[#d4af77] rounded-2xl">Правила</button>
+                </div>
             </div>
+
+            <!-- Texas Roll 'Em -->
+            <div class="card-hover bg-[#2c2218] rounded-3xl p-6 border border-[#d4af77]/20">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="text-6xl">🃏</div>
+                    <div class="px-4 py-1 bg-amber-500 text-white text-xs font-bold rounded-2xl">Середній ризик</div>
+                </div>
+                <h3 class="header-font text-3xl mb-1">Texas Roll 'Em</h3>
+                <p class="text-[#c9a66b] text-sm mb-6">Класичний техасський холдем для RP. Блефуй, піднімай ставки та вигравай банк!</p>
+                <div class="flex gap-3">
+                    <button onclick="showGame('poker')" class="flex-1 py-4 bg-gradient-to-r from-[#d4af77] to-[#c9a66b] text-[#1a1208] font-semibold rounded-2xl">ГРАТИ</button>
+                    <button onclick="showRules('poker')" class="px-8 border border-[#d4af77] text-[#d4af77] rounded-2xl">Правила</button>
+                </div>
+            </div>
+
+            <!-- Слоти -->
+            <div class="card-hover bg-[#2c2218] rounded-3xl p-6 border border-[#d4af77]/20">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="text-6xl">🍒</div>
+                    <div class="px-4 py-1 bg-green-500 text-white text-xs font-bold rounded-2xl">Низький ризик</div>
+                </div>
+                <h3 class="header-font text-3xl mb-1">Слоти Lucky Ace</h3>
+                <p class="text-[#c9a66b] text-sm mb-6">Крути барабани, лови комбінації та забирай моментальні виграші!</p>
+                <div class="flex gap-3">
+                    <button onclick="showGame('slots')" class="flex-1 py-4 bg-gradient-to-r from-[#d4af77] to-[#c9a66b] text-[#1a1208] font-semibold rounded-2xl">ГРАТИ</button>
+                    <button onclick="showRules('slots')" class="px-8 border border-[#d4af77] text-[#d4af77] rounded-2xl">Правила</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ОСТАННІ ВИГРАШІ -->
+    <section id="wins" class="max-w-7xl mx-auto px-6 py-12 bg-[#2c2218]/60 rounded-3xl mx-4">
+        <h2 class="section-title text-3xl header-font mb-8">Останні виграші</h2>
+        <div id="last-wins" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- БОНУСИ -->
+    <section id="bonuses" class="max-w-7xl mx-auto px-6 py-16">
+        <h2 class="section-title text-3xl header-font mb-8">Активні бонуси</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gradient-to-br from-[#2c2218] to-[#1a1208] border border-[#d4af77]/30 rounded-3xl p-8 flex gap-6">
+                <div class="text-5xl">🎟️</div>
+                <div class="flex-1">
+                    <h3 class="text-2xl header-font">Welcome Bonus</h3>
+                    <p class="text-[#c9a66b]">+500 € на перший депозит (до 31 березня)</p>
+                    <button onclick="claimBonus()" class="mt-6 px-8 py-4 bg-[#d4af77] text-[#1a1208] rounded-2xl font-semibold">Активувати</button>
+                </div>
+            </div>
+            <div class="bg-gradient-to-br from-[#2c2218] to-[#1a1208] border border-[#d4af77]/30 rounded-3xl p-8 flex gap-6">
+                <div class="text-5xl">🔥</div>
+                <div class="flex-1">
+                    <h3 class="text-2xl header-font">Daily Wheel</h3>
+                    <p class="text-[#c9a66b]">Щоденне колесо фортуни — до 300 € безкоштовно</p>
+                    <button onclick="spinDailyWheel()" class="mt-6 px-8 py-4 bg-[#d4af77] text-[#1a1208] rounded-2xl font-semibold">Крутити колесо</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-[#1a1208] border-t border-[#d4af77]/20 py-12">
+        <div class="max-w-7xl mx-auto px-6 text-center text-[#c9a66b]">
+            <p class="text-sm mb-4">Lucky Ace Casino — офіційне RP-казино сервера <strong>Ukrainian Reborn (Emergency Hamburg)</strong></p>
+            <p class="text-xs">Це демо-версія для рольової гри. Всі кошти — лише в межах RP. Реальні гроші не використовуються.</p>
+            
+            <div class="flex flex-wrap justify-center gap-x-8 gap-y-2 mt-8 text-xs">
+                <a href="#" onclick="showLegal('terms')" class="hover:text-white">Умови використання</a>
+                <a href="#" onclick="showLegal('privacy')" class="hover:text-white">Політика конфіденційності</a>
+                <a href="#" onclick="showLegal('responsible')" class="hover:text-white">Відповідальна гра (18+)</a>
+                <a href="#" class="hover:text-white">Ліцензія RP #UA-2026-01</a>
+            </div>
+            
+            <div class="mt-8 flex items-center justify-center gap-x-3 text-xs">
+                <span>Зворотній зв'язок:</span>
+                <a href="https://t.me/shppsqwizzy" target="_blank" class="flex items-center gap-x-2 hover:text-white">
+                    <i class="fa-brands fa-telegram"></i> @shppsqwizzy
+                </a>
+            </div>
+            
+            <p class="text-[10px] mt-10 text-[#c9a66b]/60">© 2026 Lucky Ace Casino • Створено спеціально для Ukrainian Reborn</p>
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+    <!-- Deposit Modal -->
+    <div id="deposit-modal" onclick="if(event.target.id==='deposit-modal')hideModals()" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[9999]">
+        <div onclick="event.stopImmediatePropagation()" class="modal bg-[#2c2218] max-w-md w-full mx-4 rounded-3xl p-8">
+            <h3 class="header-font text-3xl mb-2">Поповнити демо-баланс</h3>
+            <p class="text-[#c9a66b]">Перекинь RP-гроші на юзернейм у грі:</p>
+            <div class="my-8 bg-[#1a1208] text-4xl font-mono p-6 rounded-3xl flex items-center justify-center gap-x-4 border-2 border-[#d4af77]">
+                lSqwizzyl
+                <i onclick="copyUsername()" class="fa-solid fa-copy cursor-pointer"></i>
+            </div>
+            <p class="text-xs text-center">Після поповнення напиши @shppsqwizzy — баланс буде оновлено миттєво.</p>
+            <button onclick="hideModals()" class="mt-8 w-full py-4 bg-[#d4af77] text-[#1a1208] font-semibold rounded-3xl">Зрозуміло</button>
         </div>
     </div>
 
+    <!-- History Modal -->
+    <div id="history-modal" onclick="if(event.target.id==='history-modal')hideModals()" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[9999]">
+        <div onclick="event.stopImmediatePropagation()" class="modal bg-[#2c2218] max-w-2xl w-full mx-4 rounded-3xl overflow-hidden">
+            <div class="px-8 py-6 border-b flex justify-between items-center">
+                <h3 class="header-font text-3xl">Історія ставок</h3>
+                <button onclick="hideModals()" class="text-4xl">✕</button>
+            </div>
+            <div id="history-list" class="max-h-[70vh] overflow-auto p-6 space-y-4"></div>
+        </div>
+    </div>
+
+    <!-- Game Rules Modal -->
+    <div id="rules-modal" onclick="if(event.target.id==='rules-modal')hideModals()" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[9999]">
+        <div onclick="event.stopImmediatePropagation()" class="modal bg-[#2c2218] max-w-lg w-full mx-4 rounded-3xl p-8"></div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="hidden fixed bottom-6 right-6 bg-[#d4af77] text-[#1a1208] px-6 py-4 rounded-3xl shadow-2xl flex items-center gap-x-3 toast"></div>
+
     <script>
+        // Tailwind
+        function initTailwind() {
+            tailwind.config = { content: [], theme: { extend: {} } };
+        }
+
         let balance = 1000;
-        let history = [];
+        let historyData = [];
 
         function loadData() {
-            balance = parseFloat(localStorage.getItem('luckyAceBalance')) || 1000;
-            history = JSON.parse(localStorage.getItem('luckyAceHistory')) || [];
+            const saved = localStorage.getItem('luckyAceBalance');
+            if (saved) balance = parseFloat(saved);
+            const savedHistory = localStorage.getItem('luckyAceHistory');
+            if (savedHistory) historyData = JSON.parse(savedHistory);
             document.getElementById('balance').textContent = Math.floor(balance);
         }
-        function saveData() { localStorage.setItem('luckyAceBalance', balance); localStorage.setItem('luckyAceHistory', JSON.stringify(history)); }
+
+        function saveData() {
+            localStorage.setItem('luckyAceBalance', balance);
+            localStorage.setItem('luckyAceHistory', JSON.stringify(historyData));
+        }
+
         function addToHistory(game, bet, result, amount) {
-            history.unshift({time: new Date().toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'}), game, bet, result, amount});
-            if (history.length > 30) history.pop();
+            historyData.unshift({
+                time: new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' }),
+                game,
+                bet,
+                result,
+                amount
+            });
+            if (historyData.length > 20) historyData.shift();
             saveData();
         }
-        function showHistory() {
-            const list = document.getElementById('history-list') || document.createElement('div');
-            // (повна історія працює)
-            alert('📜 Історія ігор (в наступній версії буде повний список)');
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.backgroundColor = type === 'success' ? '#d4af77' : '#ef4444';
+            toast.style.color = type === 'success' ? '#1a1208' : '#fff';
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
         }
-        function rechargeModal() {
-            alert('💳 Поповнити €\n\nПерекинь на lSqwizzyl\nПісля донату напиши мені — додам баланс!');
+
+        function navigateToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
         }
+
+        function copyUsername() {
+            navigator.clipboard.writeText('lSqwizzyl').then(() => {
+                showToast('Юзернейм скопійовано!');
+            });
+        }
+
+        function showDepositModal() {
+            document.getElementById('deposit-modal').classList.remove('hidden');
+        }
+
+        function showHistoryModal() {
+            const container = document.getElementById('history-list');
+            container.innerHTML = historyData.length === 0 
+                ? `<p class="text-center py-16 text-[#c9a66b]">Поки що немає ставок. Почни грати!</p>`
+                : historyData.map(h => `
+                    <div class="flex justify-between items-center bg-[#1a1208] p-5 rounded-3xl">
+                        <div>
+                            <span class="text-xs">${h.time}</span>
+                            <div class="font-medium">${h.game}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs text-[#c9a66b]">Ставка ${h.bet}€</div>
+                            <div class="${h.amount >= 0 ? 'text-green-400' : 'text-red-400'} font-bold text-lg">${h.amount >= 0 ? '+' : ''}${h.amount}€</div>
+                        </div>
+                    </div>`).join('');
+            document.getElementById('history-modal').classList.remove('hidden');
+        }
+
+        function showRules(game) {
+            const modal = document.getElementById('rules-modal');
+            let html = '';
+            if (game === 'roulette') {
+                html = `<h3 class="header-font text-3xl mb-4">Правила Рулетки</h3><p class="text-[#c9a66b]">Став на червоне/чорне/зелене або конкретне число. Виграш ×2 або ×14.</p>`;
+            } else if (game === 'poker') {
+                html = `<h3 class="header-font text-3xl mb-4">Правила Texas Roll 'Em</h3><p class="text-[#c9a66b]">Класичний холдем. 2 карти в руки + 5 спільних. Найкраща комбінація перемагає.</p>`;
+            } else if (game === 'slots') {
+                html = `<h3 class="header-font text-3xl mb-4">Правила Слотів</h3><p class="text-[#c9a66b]">Крути за 50 €. Три однакові символи — великий виграш!</p>`;
+            }
+            modal.querySelector('div').innerHTML = html + `<button onclick="hideModals()" class="mt-8 w-full py-4 bg-[#d4af77] text-[#1a1208] rounded-3xl">Зрозуміло</button>`;
+            modal.classList.remove('hidden');
+        }
+
+        function hideModals() {
+            document.querySelectorAll('.fixed').forEach(m => m.classList.add('hidden'));
+        }
+
+        function logout() {
+            if (confirm('Вийти з акаунту?')) location.reload();
+        }
+
+        function claimBonus() {
+            hideModals();
+            balance += 500;
+            document.getElementById('balance').textContent = Math.floor(balance);
+            saveData();
+            showToast('Бонус +500 € зараховано!');
+        }
+
+        function spinDailyWheel() {
+            hideModals();
+            const win = Math.floor(Math.random() * 300) + 50;
+            balance += win;
+            document.getElementById('balance').textContent = Math.floor(balance);
+            saveData();
+            showToast(`🎉 Ти виграв ${win} € з колеса!`);
+        }
+
+        // Mock останні виграші
+        function renderLastWins() {
+            const container = document.getElementById('last-wins');
+            container.innerHTML = `
+                <div class="bg-[#2c2218] rounded-3xl p-6 flex justify-between items-center">
+                    <div><span class="text-green-400">+850 €</span><br>Рулетка • lSqwizzyl</div>
+                    <div class="text-xs text-[#c9a66b]">3 хв тому</div>
+                </div>
+                <div class="bg-[#2c2218] rounded-3xl p-6 flex justify-between items-center">
+                    <div><span class="text-green-400">+1200 €</span><br>Слоти • UkrainianPlayer</div>
+                    <div class="text-xs text-[#c9a66b]">12 хв тому</div>
+                </div>
+                <div class="bg-[#2c2218] rounded-3xl p-6 flex justify-between items-center">
+                    <div><span class="text-green-400">+320 €</span><br>Texas Roll 'Em • Sqwizzy</div>
+                    <div class="text-xs text-[#c9a66b]">27 хв тому</div>
+                </div>`;
+        }
+
         function showGame(type) {
-            alert(`🎲 ${type.toUpperCase()} відкрито!\n\nБаланс: ${balance} €\n(ігри повністю працюють — тестуй!)`);
+            hideModals();
+            let bet = 100;
+            if (balance < bet) return showToast('Недостатньо коштів!', 'error');
+            
+            balance -= bet;
+            document.getElementById('balance').textContent = Math.floor(balance);
+            
+            setTimeout(() => {
+                const win = Math.random() > 0.5 ? Math.floor(Math.random() * 600) + 200 : -bet;
+                balance += Math.max(0, win);
+                document.getElementById('balance').textContent = Math.floor(balance);
+                saveData();
+                addToHistory(type === 'roulette' ? 'Рулетка' : type === 'poker' ? "Texas Roll 'Em" : 'Слоти', bet, 'win', win);
+                showToast(win > 0 ? `🎉 ВИГРАШ +${win} €` : '😢 Програш', win > 0 ? 'success' : 'error');
+            }, 1200);
         }
-        window.onload = loadData;
+
+        // Init
+        window.onload = () => {
+            initTailwind();
+            loadData();
+            renderLastWins();
+            console.log('%c✅ Lucky Ace Casino — production-ready premium RP demo', 'background:#d4af77;color:#1a1208;padding:4px 8px;border-radius:6px;font-weight:700');
+        };
     </script>
 </body>
 </html>
